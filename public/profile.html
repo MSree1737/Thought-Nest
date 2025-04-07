@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - Thought Nest</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: rgb(216, 179, 31);
+            --secondary-color: #3f37c9;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #2b2d42;
+            --text-light: #8d99ae;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .initials {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .blog-card {
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-profile-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .new-blog-form {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                text-align: center;
+            }
+            
+            .profile-pic {
+                margin: 0 auto 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a href="/" class="navbar-brand" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                <img src="/svg/icon.svg" style="height:23px;"> Thought Nest
+            </a>
+            <div>
+                <button id="newBlogToggle" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-plus"></i> New Blog
+                </button>
+                <button id="logoutBtn" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="profile-header py-4 mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center mb-3 mb-md-0">
+                    <div class="profile-pic mx-auto">
+                        <span class="initials" id="profileInitials"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h1 id="profileUsername"></h1>
+                    <p id="profileEmail"></p>
+                    <p id="profileAge"></p>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-around">
+                        <div class="text-center">
+                            <div class="h3" id="blogCount">0</div>
+                            <div>Total Blogs</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3" id="publishedCount">0</div>
+                            <div>Published</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mb-5">
+        <!-- New Blog Form -->
+        <div id="newBlogForm" class="new-blog-form p-4 mb-4">
+            <h3 class="mb-4"><i class="fas fa-pen-fancy me-2"></i>Create New Blog</h3>
+            <form id="createBlogForm">
+                <div class="mb-3">
+                    <label for="newTitle" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="newTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label for="newContent" class="form-label">Content</label>
+                    <textarea class="form-control" id="newContent" rows="8" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="newCategory" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="newCategory">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="newImageUrl" class="form-label">Image URL</label>
+                        <input type="text" class="form-control" id="newImageUrl">
+                    </div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="newPublished">
+                    <label class="form-check-label" for="newPublished">Publish this blog</label>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" id="cancelNewBlog" class="btn btn-secondary me-2">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Create Blog
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Profile Edit Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editProfileForm">
+                            <div class="mb-3">
+                                <label for="editUsername" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="editUsername" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editAge" class="form-label">Age</label>
+                                <input type="number" class="form-control" id="editAge">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="saveProfileBtn" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blog Edit Modal -->
+        <div class="modal fade" id="editBlogModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Blog</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editBlogForm">
+                            <input type="hidden" id="editBlogId">
+                            <div class="mb-3">
+                                <label for="editTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editContent" class="form-label">Content</label>
+                                <textarea class="form-control" id="editContent" rows="10" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editCategory" class="form-label">Category</label>
+                                    <input type="text" class="form-control" id="editCategory">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="editImageUrl" class="form-label">Image URL</label>
+                                    <input type="text" class="form-control" id="editImageUrl">
+                                </div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="editPublished">
+                                <label class="form-check-label" for="editPublished">Publish this blog</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="saveBlogBtn" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mb-4"><i class="fas fa-book-open me-2"></i>Your Blogs</h2>
+        <div class="row" id="blogsContainer">
+            <!-- Blogs will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="updateToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Thought Nest</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const userEmail = localStorage.getItem('userEmail');
+            const token = localStorage.getItem('token');
+            if (!userEmail || !token) {
+                window.location.href = '/signin';
+                return;
+            }
+
+            // Initialize toast
+            const toastEl = document.getElementById('updateToast');
+            const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 3000 });
+
+            // Toggle new blog form
+            document.getElementById('newBlogToggle').addEventListener('click', () => {
+                const form = document.getElementById('newBlogForm');
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            });
+
+            document.getElementById('cancelNewBlog').addEventListener('click', () => {
+                document.getElementById('newBlogForm').style.display = 'none';
+            });
+
+            // Load profile data
+            async function loadProfile() {
+                try {
+                    const response = await fetch(`/api/user/${userEmail}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch profile');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Update profile info
+                    const initials = data.user.username?.charAt(0).toUpperCase() || 'U';
+                    document.getElementById('profileInitials').textContent = initials;
+                    document.getElementById('profileUsername').textContent = data.user.username || 'User';
+                    document.getElementById('profileEmail').textContent = data.user.email;
+                    document.getElementById('profileAge').textContent = 
+                        data.user.age ? `${data.user.age} years old` : '';
+
+                    // Add edit button to username
+                    const usernameElement = document.getElementById('profileUsername');
+                    if (!usernameElement.querySelector('.edit-profile-btn')) {
+                        const editButton = document.createElement('button');
+                        editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                        editButton.className = 'edit-profile-btn';
+                        editButton.addEventListener('click', () => {
+                            const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+                            document.getElementById('editUsername').value = data.user.username || '';
+                            document.getElementById('editAge').value = data.user.age || '';
+                            modal.show();
+                        });
+                        usernameElement.appendChild(editButton);
+                    }
+
+                    // Update blog counts and render blogs
+                    const blogs = data.blogs || [];
+                    document.getElementById('blogCount').textContent = blogs.length;
+                    document.getElementById('publishedCount').textContent = 
+                        blogs.filter(blog => blog.published).length;
+                    
+                    renderBlogs(blogs);
+                } catch (err) {
+                    console.error('Error loading profile:', err);
+                    showToast('Failed to load profile data', 'error');
+                }
+            }
+
+            // Render blogs
+            function renderBlogs(blogs) {
+                const container = document.getElementById('blogsContainer');
+                container.innerHTML = '';
+                
+                if (blogs.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-book-open fa-3x mb-3 text-muted"></i>
+                            <h4 class="text-muted">No blogs yet</h4>
+                            <p class="text-muted">Click "New Blog" to create your first post</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                blogs.forEach(blog => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-6 mb-4';
+                    col.innerHTML = `
+                        <div class="blog-card card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge ${blog.published ? 'bg-success' : 'bg-warning text-dark'}">
+                                        ${blog.published ? 'Published' : 'Draft'}
+                                    </span>
+                                    ${blog.category ? `<span class="badge bg-info">${blog.category}</span>` : ''}
+                                </div>
+                                <h3 class="card-title">${blog.title}</h3>
+                                <p class="text-muted small mb-2">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    ${new Date(blog.created_at).toLocaleDateString()}
+                                </p>
+                                <div class="card-text mb-3">
+                                    ${blog.content.substring(0, 150)}...
+                                </div>
+                                ${blog.image_url ? `
+                                    <img src="${blog.image_url}" class="img-fluid rounded mb-3" alt="Blog image">
+                                ` : ''}
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-sm btn-outline-primary edit-blog me-2" data-id="${blog.id}">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-blog" data-id="${blog.id}">
+                                        <i class="fas fa-trash-alt me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(col);
+                });
+                
+                // Add event listeners
+                document.querySelectorAll('.edit-blog').forEach(btn => {
+                    btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.delete-blog').forEach(btn => {
+                    btn.addEventListener('click', () => deleteBlog(btn.dataset.id));
+                });
+            }
+
+            // Open blog edit modal
+            async function openEditModal(blogId) {
+                try {
+                    const response = await fetch(`/api/blogs/${blogId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch blog');
+                    }
+
+                    const blog = await response.json();
+                    
+                    document.getElementById('editBlogId').value = blog.id;
+                    document.getElementById('editTitle').value = blog.title;
+                    document.getElementById('editContent').value = blog.content;
+                    document.getElementById('editCategory').value = blog.category || '';
+                    document.getElementById('editImageUrl').value = blog.image_url || '';
+                    document.getElementById('editPublished').checked = blog.published || false;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('editBlogModal'));
+                    modal.show();
+                } catch (err) {
+                    console.error('Error opening edit modal:', err);
+                    showToast('Failed to load blog for editing', 'error');
+                }
+            }
+
+            // Save blog changes
+            async function saveBlogChanges() {
+                try {
+                    const blogId = document.getElementById('editBlogId').value;
+                    const blogData = {
+                        title: document.getElementById('editTitle').value,
+                        content: document.getElementById('editContent').value,
+                        category: document.getElementById('editCategory').value,
+                        image_url: document.getElementById('editImageUrl').value,
+                        published: document.getElementById('editPublished').checked
+                    };
+                    
+                    if (!blogId) {
+                        throw new Error('Invalid blog ID');
+                    }
+
+                    if (!blogData.title || !blogData.content) {
+                        throw new Error('Title and content are required');
+                    }
+
+                    const response = await fetch(`/api/blogs/${blogId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(blogData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to update blog');
+                    }
+
+                    // Close the modal and refresh the list
+                    bootstrap.Modal.getInstance(document.getElementById('editBlogModal')).hide();
+                    loadProfile();
+                    
+                    // Show success message
+                    showToast('Blog updated successfully!', 'success');
+                } catch (err) {
+                    console.error('Error saving blog:', err);
+                    showToast(err.message || 'Failed to update blog', 'error');
+                }
+            }
+
+            // Create new blog
+            document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                try {
+                    const blogData = {
+                        title: document.getElementById('newTitle').value,
+                        content: document.getElementById('newContent').value,
+                        category: document.getElementById('newCategory').value,
+                        image_url: document.getElementById('newImageUrl').value,
+                        published: document.getElementById('newPublished').checked,
+                        user_email: userEmail
+                    };
+                    
+                    if (!blogData.title || !blogData.content || !blogData.user_email) {
+                        throw new Error('Title and content are required');
+                    }
+
+                    const response = await fetch('/api/blogs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(blogData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to create blog');
+                    }
+
+                    document.getElementById('createBlogForm').reset();
+                    document.getElementById('newBlogForm').style.display = 'none';
+                    loadProfile();
+                    
+                    showToast('Blog created successfully!', 'success');
+                } catch (err) {
+                    console.error('Error creating blog:', err);
+                    showToast(err.message || 'Failed to create blog', 'error');
+                }
+            });
+
+            // Delete blog
+            async function deleteBlog(blogId) {
+                if (!confirm('Are you sure you want to delete this blog?')) return;
+                
+                try {
+                    const response = await fetch(`/api/blogs/${blogId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to delete blog');
+                    }
+            
+                    loadProfile();
+                    showToast('Blog deleted successfully!', 'success');
+                } catch (err) {
+                    console.error('Error deleting blog:', err);
+                    showToast(err.message || 'Failed to delete blog', 'error');
+                }
+            }
+
+            // Update profile
+            document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+                try {
+                    const profileData = {
+                        username: document.getElementById('editUsername').value,
+                        age: document.getElementById('editAge').value
+                    };
+                    
+                    if (!profileData.username) {
+                        throw new Error('Username is required');
+                    }
+
+                    const response = await fetch(`/api/user/${userEmail}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(profileData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to update profile');
+                    }
+
+                    bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+                    loadProfile();
+                    showToast('Profile updated successfully!', 'success');
+                } catch (err) {
+                    console.error('Error updating profile:', err);
+                    showToast(err.message || 'Failed to update profile', 'error');
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('token');
+                window.location.href = '/signin';
+            });
+
+            // Show toast message
+            function showToast(message, type = 'success') {
+                const toastMessage = document.getElementById('toastMessage');
+                toastMessage.textContent = message;
+                
+                // Reset classes
+                toastEl.classList.remove('bg-success', 'bg-danger');
+                
+                // Add appropriate class based on type
+                if (type === 'error') {
+                    toastEl.classList.add('bg-danger');
+                } else {
+                    toastEl.classList.add('bg-success');
+                }
+                
+                toast.show();
+            }
+
+            // Initialize blog edit form handlers
+            document.getElementById('editBlogForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveBlogChanges();
+            });
+
+            document.getElementById('saveBlogBtn').addEventListener('click', function() {
+                saveBlogChanges();
+            });
+
+            // Initialize
+            loadProfile();
+        });
+    </script>
+</body>
+</html>

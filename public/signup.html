@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Thought Nest</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+    <style>/* Auth Container Styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Header Styles */
+        .auth-card h2 {
+            color: #2b2d42;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Form Styles */
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background-color: rgb(216, 179, 31);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: rgba(216, 179, 31, 0.9);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Link Styles */
+        .text-center a {
+            color: #4361ee;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .text-center a:hover {
+            text-decoration: underline;
+            color: #3a56d4;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 1.75rem;
+            }
+            
+            .auth-card h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Error Message Styles */
+        .alert {
+            margin-top: 1rem;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Loading State */
+        .is-loading {
+            position: relative;
+            pointer-events: none;
+        }
+        
+        .is-loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }</style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2 class="text-center mb-4">Create Account</h2>
+            <form id="signupForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                <div class="text-center mt-3">
+                    Already have an account? <a href="/signin">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const username = document.getElementById('username').value;
+            
+            // Validation
+            if (!email || !password || !confirmPassword) {
+                alert('Please fill in all required fields!');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert("Passwords don't match!");
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters long!");
+                return;
+            }
+            
+            try {
+                // 1. Register the user
+                const registerResponse = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: email,
+                        password: password,
+                        username: username
+                    }),
+                });
+                
+                const registerData = await registerResponse.json();
+                
+                if (!registerResponse.ok) {
+                    throw new Error(registerData.error || 'Registration failed');
+                }
+        
+                // 2. Login the user after successful registration
+                const loginResponse = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: email,
+                        password: password 
+                    }),
+                });
+                
+                const loginData = await loginResponse.json();
+                
+                if (!loginResponse.ok) {
+                    // If login fails after registration, redirect to login page
+                    alert('Registration successful! Please log in.');
+                    window.location.href = '/signin';
+                    return;
+                }
+        
+                // 3. Store user data and redirect
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('username', loginData.user.username || email.split('@')[0]);
+                localStorage.setItem('token', loginData.token || ''); // If using token-based auth
+                
+                // Redirect to profile page
+                window.location.href = '/profile';
+                
+            } catch (err) {
+                console.error('Signup error:', err);
+                alert(err.message || 'An error occurred during signup. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+ /* styles.css */
+/* Base Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #f8f9fa; /* bg-body-tertiary equivalent */
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.navbar-brand img {
+    height: 23px;
+    margin-right: 8px;
+}
+
+.navbar-nav {
+    margin-left: auto;
+}
+
+/* Sign In Button */
+.navbar button[onclick] {
+    margin-left: auto;
+    border-radius: 12%;
+    background-color: rgb(216, 179, 31);
+    border: none;
+    padding: 8px 16px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    cursor: pointer;
+}
+
+/* Main Content Styles */
+.content {
+    padding: 2rem;
+}
+
+.content > div {
+    margin-bottom: 2rem;
+}
+
+.content p {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.content p.rounded.float-start {
+    margin: 15% 7% 4% 7%;
+    font-size: 3.5rem;
+}
+
+.content div[style*="width:30%"] {
+    width: 30%;
+}
+
+.content div[style*="width:30%"] img {
+    width: 50vh;
+    margin-top: 20%;
+    margin-right: 7%;
+    height: 80%;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+.content p[style*="margin-left:6%"] {
+    margin-left: 6%;
+    font-size: 1.5rem;
+}
+
+/* Start Writing Button */
+.content button[onclick] {
+    font-size: 1.2rem;
+    margin-left: 7%;
+    border-radius: 5%;
+    background-color: rgb(216, 179, 31);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    cursor: pointer;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer hr {
+    margin: 0 auto 20px;
+    width: 90%;
+}
+
+footer a {
+    color: #6c757d;
+    text-decoration: none;
+    margin: 0 10px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+footer a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .content {
+        flex-direction: column;
+    }
+    
+    .content > div {
+        width: 100% !important;
+    }
+    
+    .content div[style*="width:30%"] img {
+        width: 100%;
+        margin: 20px 0;
+    }
+    
+    .content p.rounded.float-start {
+        margin: 5% 5% 20px;
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar button[onclick] {
+        margin-left: 0;
+    }
+    
+    .content p.rounded.float-start {
+        font-size: 2rem;
+    }
+}
